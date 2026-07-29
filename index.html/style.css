@@ -1,0 +1,550 @@
+:root {
+    --accent-gold: #f39c12;
+    --accent-rose: #ff7675;
+    --accent-glow: #fdcb6e;
+    --error-red: #ff3838;
+    --success-green: #2ecc71;
+    --bg-dark: #020208;
+    --glass-bg: rgba(15, 15, 30, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: var(--font-main);
+    color: #ffffff;
+}
+
+/* ==========================================
+   1. INTRO CON PAUSA ENTRE FRASES
+   ========================================== */
+#intro-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    padding-top: max(30px, env(safe-area-inset-top));
+    padding-bottom: max(30px, env(safe-area-inset-bottom));
+    text-align: center;
+    transition: opacity 1.5s ease-in-out, visibility 1.5s;
+}
+
+.intro-slide {
+    position: absolute;
+    font-size: 1.35rem;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transform: translateY(15px);
+    max-width: 650px;
+    transition: opacity 1.2s ease, transform 1.2s ease;
+    pointer-events: none;
+}
+
+.intro-slide.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-enter-sky {
+    position: absolute;
+    bottom: max(80px, calc(40px + env(safe-area-inset-bottom)));
+    padding: 16px 36px;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
+    z-index: 10;
+}
+
+.btn-enter-sky.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+}
+
+.btn-enter-sky:hover {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 45px rgba(243, 156, 18, 0.6);
+    transform: scale(1.05);
+}
+
+/* ==========================================
+   2. CIELO INFINITO
+   ========================================== */
+#sky-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    overflow: hidden;
+    background: radial-gradient(ellipse at bottom, #0a1128 0%, #020208 100%);
+}
+
+#starfield-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sky-header {
+    position: absolute;
+    top: max(35px, env(safe-area-inset-top));
+    width: 100%;
+    text-align: center;
+    z-index: 300;
+    pointer-events: none;
+    padding: 0 15px;
+}
+
+.sky-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: #ffffff;
+    text-shadow: 0 0 18px rgba(253, 203, 110, 0.8), 0 0 35px rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+
+.sky-subtitle {
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 6px;
+}
+
+/* ==========================================
+   3. ANIMACIÓN DE CAÍDA DE ESTRELLAS
+   ========================================== */
+#falling-stars-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+}
+
+.falling-star-node {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 15px #fff, 0 0 25px var(--accent-glow), 0 0 35px rgba(243, 156, 18, 0.5);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+    touch-action: none;
+    overflow: hidden;
+}
+
+.falling-star-node:hover {
+    transform: scale(1.35) !important;
+    box-shadow: 0 0 25px #fff, 0 0 50px var(--accent-rose);
+    z-index: 500;
+}
+
+.star-month-badge {
+    position: absolute;
+    bottom: 2px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================
+   4. MODAL DE FOTO
+   ========================================== */
+#photo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 600;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#photo-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 22px;
+    border-radius: 24px;
+    max-width: 90%;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+    transform: scale(0.7);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#photo-modal.active .modal-card {
+    transform: scale(1);
+}
+
+.photo-counter {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--accent-glow);
+    margin-bottom: 12px;
+    font-weight: 300;
+    line-height: 1.4;
+}
+
+.modal-img-wrapper {
+    width: 100%;
+    height: 300px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.close-btn {
+    padding: 10px 32px;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.close-btn:active {
+    transform: scale(0.95);
+}
+
+#sky-next-container {
+    position: absolute;
+    bottom: max(35px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+}
+
+/* ==========================================
+   5. PUZZLE Y EFECTOS DE ERROR/ÉXITO
+   ========================================== */
+#puzzle-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 800;
+    background: radial-gradient(circle, #101026 0%, #05050d 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+    padding: 15px;
+    padding-top: max(15px, env(safe-area-inset-top));
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
+}
+
+#puzzle-screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.puzzle-reference-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.reference-label {
+    font-size: 0.75rem;
+    color: var(--accent-glow);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.puzzle-reference-img {
+    width: 48px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ffffff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+#puzzle-board {
+    width: 300px;
+    height: 225px; /* Ratio 4:3 */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 3px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#puzzle-board.error {
+    border-color: var(--error-red) !important;
+    box-shadow: 0 0 25px rgba(255, 56, 56, 0.8) !important;
+    animation: shakeBoard 0.5s ease-in-out;
+}
+
+#puzzle-board.success {
+    border-color: var(--success-green) !important;
+    box-shadow: 0 0 30px rgba(46, 204, 113, 0.8) !important;
+}
+
+@keyframes shakeBoard {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}
+
+#puzzle-status-msg {
+    height: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+#puzzle-status-msg.error-text { color: var(--error-red); }
+#puzzle-status-msg.success-text { color: var(--success-green); }
+
+.puzzle-slot {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#puzzle-pieces-bank {
+    width: 300px;
+    min-height: 90px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.puzzle-piece {
+    width: 90px;
+    height: 67px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background-size: 290px 217px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.puzzle-piece.selected {
+    transform: scale(1.1);
+    border-color: var(--accent-glow);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.puzzle-slot .puzzle-piece {
+    width: 100%;
+    height: 100%;
+    border: none;
+    box-shadow: none;
+}
+
+/* Animación de pulso para el botón al resolver el puzzle */
+.btn-enter-sky.visible.pulse {
+    animation: btnGlowPulse 2s infinite ease-in-out;
+}
+
+@keyframes btnGlowPulse {
+    0% {
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(255, 118, 117, 0.8);
+        transform: scale(1.04);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+        transform: scale(1);
+    }
+}
+
+/* ==========================================
+   6. CARTA FINAL
+   ========================================== */
+#letter-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 900;
+    background: radial-gradient(circle, #1a0f1d 0%, #05050d 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease;
+}
+
+#letter-screen.active { 
+    opacity: 1; 
+    pointer-events: all; 
+}
+
+.envelope-wrapper {
+    width: 280px;
+    height: 190px;
+    background: #2c1a2e;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.envelope-wrapper:hover {
+    transform: scale(1.03);
+}
+
+.wax-seal { 
+    font-size: 2rem; 
+}
+
+.letter-paper {
+    position: absolute;
+    width: 90%;
+    max-width: 450px;
+    max-height: 80vh;
+    background: #fdfbf7;
+    color: #2c3e50;
+    border-radius: 12px;
+    padding: 30px 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transform: translateY(100vh);
+    transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.letter-paper.open { 
+    transform: translateY(0); 
+}
+
+.letter-header {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #8e44ad;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.letter-body {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #34495e;
+}
